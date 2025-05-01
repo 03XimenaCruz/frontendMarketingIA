@@ -12,6 +12,9 @@ const loadGoogleFonts = () => {
 };
 
 const Home = () => {
+    // Obtener la URL del backend desde la variable de entorno
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
     // Estados para los datos de cada visualización
     const [data, setData] = useState([]);
     const [salesTrend, setSalesTrend] = useState(null);
@@ -26,38 +29,37 @@ const Home = () => {
 
     // Funciones para consumir los endpoints del backend
     const getDataFrame = async () => {
-        const response = await axios.get('http://localhost:8000/api/data/dataframe');
+        const response = await axios.get(`${API_URL}/api/data/dataframe`);
         return response.data;
     };
 
     const getSalesTrend = async () => {
-        const response = await axios.get('http://localhost:8000/api/visualizations/sales-trend');
+        const response = await axios.get(`${API_URL}/api/visualizations/sales-trend`);
         return response.data;
     };
 
     const getCountryBar = async () => {
-        const response = await axios.get('http://localhost:8000/api/visualizations/country-bar');
+        const response = await axios.get(`${API_URL}/api/visualizations/country-bar`);
         return response.data;
     };
 
     const getHistograms = async (column) => {
-        const response = await axios.get(`http://localhost:8000/api/visualizations/histograms/${column}`);
+        const response = await axios.get(`${API_URL}/api/visualizations/histograms/${column}`);
         return response.data;
     };
 
     const getCorrelationHeatmap = async () => {
-        const response = await axios.get('http://localhost:8000/api/visualizations/correlation-heatmap');
+        const response = await axios.get(`${API_URL}/api/visualizations/correlation-heatmap`);
         return response.data;
     };
 
     const getPCAScatter = async () => {
-        const response = await axios.get('http://localhost:8000/api/visualizations/pca-scatter');
+        const response = await axios.get(`${API_URL}/api/visualizations/pca-scatter`);
         return response.data;
     };
 
     // useEffect para cargar todos los datos al montar el componente
     useEffect(() => {
-        // Cargar la fuente Roboto
         loadGoogleFonts();
 
         const fetchData = async () => {
@@ -103,48 +105,48 @@ const Home = () => {
         };
 
         fetchData();
-    }, []); // Se ejecuta solo al montar el componente
+    }, []);
 
     // Estilos CSS
     const styles = {
         container: {
             padding: '30px',
             fontFamily: "Times New Roman, Georgia, Garamond",
-            backgroundColor: '#ffff', // Fondo claro
+            backgroundColor: '#ffff',
             minHeight: '100vh',
         },
         title: {
             fontSize: '2.5rem',
             fontWeight: '700',
-            color: '#2c3e50', // Color oscuro
+            color: '#2c3e50',
             textAlign: 'center',
             marginBottom: '40px',
         },
         sectionTitle: {
             fontSize: '1.8rem',
             fontWeight: '400',
-            color: '#2e4053 ', // Color gris oscuro
+            color: '#2e4053',
             textAlign: 'center',
             marginBottom: '20px',
         },
         subSectionTitle: {
             fontSize: '1.3rem',
             fontWeight: '400',
-            color: '#7f8c8d', // Color gris claro
+            color: '#7f8c8d',
             textAlign: 'center',
             marginBottom: '15px',
         },
         section: {
-            backgroundColor: ' #d4e6f1', // Fondo blanco para las secciones
+            backgroundColor: '#d4e6f1',
             borderRadius: '10px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.17)', // Sombra suave
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.17)',
             padding: '20px',
             marginBottom: '40px',
         },
         centeredPlot: {
             display: 'flex',
-            justifyContent: 'center', // Centra horizontalmente
-            alignItems: 'center', // Centra verticalmente (opcional)
+            justifyContent: 'center',
+            alignItems: 'center',
             width: '100%',
         },
         loading: {
@@ -155,7 +157,7 @@ const Home = () => {
         error: {
             textAlign: 'center',
             fontSize: '1.2rem',
-            color: '#e74c3c', // Color rojo para errores
+            color: '#e74c3c',
             marginBottom: '20px',
         },
         histogramsGrid: {
@@ -169,13 +171,10 @@ const Home = () => {
         <div style={styles.container}>
             <h1 style={styles.title}>MARKETING IA</h1>
 
-            {/* Estado de carga */}
             {loading && <p style={styles.loading}>Cargando datos...</p>}
 
-            {/* Mensaje de error */}
             {error && <p style={styles.error}>{error}</p>}
 
-            {/* Tabla de datos */}
             {!loading && !error && data.length > 0 && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>DataSet</h2>
@@ -183,7 +182,6 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Gráfico de tendencia de ventas */}
             {!loading && !error && salesTrend && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>Tendencia de Ventas</h2>
@@ -195,7 +193,6 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Gráfico de barras (Ventas por País) */}
             {!loading && !error && countryBar && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>Ventas por País</h2>
@@ -207,11 +204,9 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Histogramas por clúster */}
             {!loading && !error && (histogramsOrderNumber.length > 0 || histogramsQuantityOrdered.length > 0) && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>Histogramas por Clúster</h2>
-                    {/* Fila para ORDERNUMBER */}
                     {histogramsOrderNumber.length > 0 && (
                         <div>
                             <h3 style={styles.subSectionTitle}>Histogramas de ORDERNUMBER</h3>
@@ -228,7 +223,6 @@ const Home = () => {
                             </div>
                         </div>
                     )}
-                    {/* Fila para QUANTITYORDERED */}
                     {histogramsQuantityOrdered.length > 0 && (
                         <div style={{ marginTop: '30px' }}>
                             <h3 style={styles.subSectionTitle}>Histogramas de QUANTITYORDERED</h3>
@@ -248,7 +242,6 @@ const Home = () => {
                 </div>
             )}
 
-            {/* Matriz de correlación */}
             {!loading && !error && heatmap && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>Matriz de Correlación</h2>
@@ -256,13 +249,12 @@ const Home = () => {
                         <Plot
                             data={heatmap.data}
                             layout={heatmap.layout}
-                            style={{ width: '600px', height: '600px' }} // Ajusta el tamaño para que no sea demasiado grande
+                            style={{ width: '600px', height: '600px' }}
                         />
                     </div>
                 </div>
             )}
 
-            {/* Gráfico de dispersión 3D (PCA) */}
             {!loading && !error && pcaScatter && (
                 <div style={styles.section}>
                     <h2 style={styles.sectionTitle}>Dispersión 3D (PCA)</h2>
